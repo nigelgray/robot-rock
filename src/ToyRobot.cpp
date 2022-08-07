@@ -90,15 +90,15 @@ std::string ToyRobot::process(std::string input)
 		auto command = parse(tokenized[0]);
 		return execute(command);
 	}
-	catch(std::invalid_argument iaex)
+	catch(std::invalid_argument const& iaex)
 	{
 		return std::string(iaex.what()) + ": " + input;
 	}
-	catch(std::out_of_range orex)
+	catch(std::out_of_range const& orex)
 	{
 		return std::string(orex.what()) + ": " + report();
 	}
-	catch(std::runtime_error rtex)
+	catch(std::runtime_error const& rtex)
 	{
 		return std::string(rtex.what());
 	}
