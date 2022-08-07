@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include <regex>
 #include <sstream>
 #include <stdexcept>
@@ -25,6 +26,12 @@ enum class CompassBearing {
 	West
 };
 
+struct Location {
+	uint8_t latitude{0u};
+	uint8_t longitude{0u};
+	CompassBearing compassBearing{CompassBearing::North};
+};
+
 // This unordered_map is used to convert the user input into the command to execute
 static const std::unordered_map<Command, std::string_view> commandDescriptions = {
 	{Command::Place,         "PLACE"sv},
@@ -42,7 +49,6 @@ static const std::unordered_map<CompassBearing, std::string_view> compassDescrip
 	{CompassBearing::South,  "SOUTH"sv},
 	{CompassBearing::West,   "WEST"sv}
 };
-
 
 // Overload the '++' and '--' operators to make it easier to turn the robot left/right
 CompassBearing& operator++(CompassBearing& c)
@@ -65,8 +71,9 @@ static const uint8_t MIN_LATITUDE = 0;
 static const uint8_t MAX_LONGITUDE = 5;
 static const uint8_t MIN_LONGITUDE = 0;
 
-// Initialise the robot location to be the south-west corner facing north
-// TODO: Add support for the user to place the robot on the grid
+// Initialise the robot location with valid values, but with _placed
+// initialised to false to block any commands until a valid 'PLACE'
+// command has been received
 ToyRobot::ToyRobot() :
 	_placed(false),
 	_latitude(0),
@@ -83,12 +90,11 @@ std::string ToyRobot::process(std::string input)
 		return {};
 	}
 
-	auto tokenized = split(input);
-
 	try
 	{
-		auto command = parse(tokenized[0]);
-		return execute(command);
+		auto tokenized = split(input);
+		auto [command, location] = parse(tokenized);
+		return execute(command, location);
 	}
 	catch(std::invalid_argument const& iaex)
 	{
@@ -109,6 +115,12 @@ std::string ToyRobot::process(std::string input)
 // command input will also have parameters for the x,y,f settings
 std::vector<std::string> ToyRobot::split(std::string input)
 {
+	// Sanitize the user input so that it is all upper-case
+	std::transform(input.begin(), input.end(), input.begin(),
+	               [](unsigned char c) -> unsigned char {
+		return std::toupper(c);
+	});
+
 	// Split the input string by spaces and commas
 	const std::regex re(R"([\s|,]+)");
 	std::sregex_token_iterator it{ input.begin(), input.end(), re, -1 };
@@ -120,17 +132,37 @@ std::vector<std::string> ToyRobot::split(std::string input)
 		tokenized.erase(tokenized.begin());
 	}
 
+	// Check there are either 1 or 4 arguments. `PLACE` should have 4, the
+	// others should all be 1.
+	if(tokenized.size() != 1 && tokenized.size() != 4)
+	{
+		throw std::invalid_argument("Incorrect number of arguments");
+	}
+
 	return tokenized;
 }
 
-Command ToyRobot::parse(std::string input)
+std::pair<Command, Location> ToyRobot::parse(std::vector<std::string> tokenized)
 {
-	// Sanitize the user input so that it is all upper-case
-	std::transform(input.begin(), input.end(), input.begin(),
-	               [](unsigned char c) -> unsigned char {
-		return std::toupper(c);
-	});
+	Location location;
 
+	auto command = parseCommand(tokenized[0]);
+	if(command == Command::Place)
+	{
+		if(tokenized.size() != 4)
+		{
+			throw std::invalid_argument("Incorrect number of arguments");
+		}
+		location.longitude = parseLatLong(tokenized[1]);
+		location.latitude = parseLatLong(tokenized[2]);
+		location.compassBearing = parseBearing(tokenized[3]);
+	}
+
+	return {command, location};
+}
+
+Command ToyRobot::parseCommand(std::string input)
+{
 	// Iterate over the unordered map to find the matching value and
 	// use that to convert to the Command enum
 	for(auto& [command, description] : commandDescriptions)
@@ -145,7 +177,45 @@ Command ToyRobot::parse(std::string input)
 	throw std::invalid_argument("Cannot parse command");
 }
 
-std::string ToyRobot::execute(Command command)
+uint8_t ToyRobot::parseLatLong(std::string input)
+{
+	int result;
+	try
+	{
+		result = std::stoi(input);
+	}
+	catch(std::invalid_argument const& iaex)
+	{
+		// Recast into a more user friendly error message
+		throw std::invalid_argument("Lat/long value not a number");
+	}
+
+	// Check the value is within the uint8_t limits before casting
+	if((result <  std::numeric_limits<uint8_t>::min()) || (result > std::numeric_limits<uint8_t>::max()))
+	{
+		throw std::invalid_argument("Lat/long value invalid");
+	}
+
+	return static_cast<uint8_t>(result);
+}
+
+CompassBearing ToyRobot::parseBearing(std::string input)
+{
+	// Iterate over the unordered map to find the matching value and
+	// use that to convert to the CompassBearing enum
+	for(auto& [bearing, description] : compassDescriptions)
+	{
+		if(input.compare(description) == 0)
+		{
+			return bearing;
+		}
+	}
+
+	// If we are unable to match the compass bearing, throw an error
+	throw std::invalid_argument("Cannot parse compass bearing");
+}
+
+std::string ToyRobot::execute(Command command, Location location)
 {
 	if(!_placed && (command != Command::Place))
 	{
@@ -155,8 +225,7 @@ std::string ToyRobot::execute(Command command)
 	switch(command)
 	{
 	case Command::Place:
-		_placed = true;
-		return "TODO: Place";
+		place(location);
 		break;
 
 	case Command::Move:
@@ -180,6 +249,25 @@ std::string ToyRobot::execute(Command command)
 	}
 
 	return {};
+}
+
+void ToyRobot::place(Location location)
+{
+	if((location.longitude < MIN_LONGITUDE) || (location.longitude > MAX_LONGITUDE))
+	{
+		throw std::invalid_argument("Longitude value out-of-bounds");
+	}
+	_longitude = location.longitude;
+
+	if((location.latitude < MIN_LATITUDE) || (location.latitude > MAX_LATITUDE))
+	{
+		throw std::invalid_argument("Latitude value out-of-bounds");
+	}
+	_latitude = location.latitude;
+
+	_compassBearing = location.compassBearing;
+
+	_placed = true;
 }
 
 void ToyRobot::move()
@@ -216,14 +304,14 @@ void ToyRobot::move()
 		break;
 	}
 
-	throw std::out_of_range("Trying to move Toy Robot outside board area");
+	throw std::out_of_range("Trying to move Toy Robot out-of-bounds");
 }
 
 std::string ToyRobot::report()
 {
 	std::string compass;
 	auto result = compassDescriptions.find(_compassBearing);
-	if(result != compassDescriptions.end() ) {
+	if(result != compassDescriptions.end()) {
 		compass = std::string(result->second);
 	}
 
