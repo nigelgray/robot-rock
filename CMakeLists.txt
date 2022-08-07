@@ -22,6 +22,11 @@ if ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "G
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
 
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  set_property(TARGET ${PROJECT_NAME} PROPERTY
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 enable_testing()
 
 set(TEST_NAME ${PROJECT_NAME}Test)
@@ -42,6 +47,11 @@ target_include_directories(${TEST_NAME} PUBLIC src)
 target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
 if ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
   target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  set_property(TARGET ${TEST_NAME} PROPERTY
+    MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 include(GoogleTest)
