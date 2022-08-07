@@ -18,7 +18,9 @@ add_executable(${PROJECT_NAME}
 )
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+if ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 enable_testing()
 
@@ -38,7 +40,9 @@ target_link_libraries(
 
 target_include_directories(${TEST_NAME} PUBLIC src)
 target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
-target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+if ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+  target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 include(GoogleTest)
 gtest_discover_tests(${TEST_NAME})
