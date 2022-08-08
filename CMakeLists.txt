@@ -1,4 +1,6 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.16)
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 project(RobotRock CXX)
 
@@ -18,8 +20,9 @@ add_executable(${PROJECT_NAME}
 )
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-if ((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+if((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
-  enable_testing()
-  add_subdirectory(test)
 endif()
+
+enable_testing()
+add_subdirectory(test)
