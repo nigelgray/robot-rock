@@ -1,5 +1,7 @@
 ![](https://cdn2.iconfinder.com/data/icons/daft-punk-helments/512/Off.png)
 
+![](https://github.com/nigelgray/robot-rock/actions/workflows/cmake.yml/badge.svg)
+
 # Toy Robot Class
 
 This class implements a toy robot game.
