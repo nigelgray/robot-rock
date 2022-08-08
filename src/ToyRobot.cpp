@@ -63,12 +63,12 @@ CompassBearing& operator--(CompassBearing& c)
 
 // Latitude is the north-south direction
 // South-most is MIN_LATITUDE, north-most is MAX_LATITUDE
-static const uint8_t MAX_LATITUDE = 5;
+static const uint8_t MAX_LATITUDE = 4;
 static const uint8_t MIN_LATITUDE = 0;
 
 // Longitude is the west-east direction
 // West-most is MIN_LONGITUDE, east-most is MAX_LONGITUDE
-static const uint8_t MAX_LONGITUDE = 5;
+static const uint8_t MAX_LONGITUDE = 4;
 static const uint8_t MIN_LONGITUDE = 0;
 
 // Initialise the robot location with valid values, but with _placed

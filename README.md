@@ -8,6 +8,12 @@ This class implements a toy robot game.
 
 The user can enter commands to place, rotate and move a toy robot on a 5x5 board.
 
+| 0,4 | 1,4 | 2,4 | 3,4 | 4,4 |
+| 0,3 | 1,3 | 2,3 | 3,3 | 4,3 |
+| 0,2 | 1,2 | 2,2 | 3,2 | 4,2 |
+| 0,1 | 1,1 | 2,1 | 3,1 | 4,1 |
+| 0,0 | 1,0 | 2,0 | 3,0 | 4,0 |
+
 ## Building
 
 This has been tested with `clang 13` on macOS but should work with all modern compilers.
@@ -66,37 +72,39 @@ Output: 4,2,EAST
 $ ctest
 Test project /Users/nigelgray/workspace/robot-rock/build
       Start  1: ToyRobotTest.BadUserInput
- 1/15 Test  #1: ToyRobotTest.BadUserInput ......................   Passed    0.02 sec
+ 1/16 Test  #1: ToyRobotTest.BadUserInput .......................   Passed    0.01 sec
       Start  2: ToyRobotTest.PlaceTooFewArguments
- 2/15 Test  #2: ToyRobotTest.PlaceTooFewArguments ..............   Passed    0.00 sec
+ 2/16 Test  #2: ToyRobotTest.PlaceTooFewArguments ...............   Passed    0.00 sec
       Start  3: ToyRobotTest.PlaceTooManyArguments
- 3/15 Test  #3: ToyRobotTest.PlaceTooManyArguments .............   Passed    0.00 sec
+ 3/16 Test  #3: ToyRobotTest.PlaceTooManyArguments ..............   Passed    0.00 sec
       Start  4: ToyRobotTest.MovingBeforeBeingPlaced
- 4/15 Test  #4: ToyRobotTest.MovingBeforeBeingPlaced ...........   Passed    0.00 sec
+ 4/16 Test  #4: ToyRobotTest.MovingBeforeBeingPlaced ............   Passed    0.00 sec
       Start  5: ToyRobotTest.PlacingOutOfBoundsLongitude
- 5/15 Test  #5: ToyRobotTest.PlacingOutOfBoundsLongitude .......   Passed    0.00 sec
+ 5/16 Test  #5: ToyRobotTest.PlacingOutOfBoundsLongitude ........   Passed    0.00 sec
       Start  6: ToyRobotTest.PlacingOutOfBoundsLatitude
- 6/15 Test  #6: ToyRobotTest.PlacingOutOfBoundsLatitude ........   Passed    0.00 sec
+ 6/16 Test  #6: ToyRobotTest.PlacingOutOfBoundsLatitude .........   Passed    0.00 sec
       Start  7: ToyRobotTest.PlacingWithInvalidBearing
- 7/15 Test  #7: ToyRobotTest.PlacingWithInvalidBearing .........   Passed    0.00 sec
+ 7/16 Test  #7: ToyRobotTest.PlacingWithInvalidBearing ..........   Passed    0.00 sec
       Start  8: ToyRobotTest.PlacingInvalidLongitude
- 8/15 Test  #8: ToyRobotTest.PlacingInvalidLongitude ...........   Passed    0.00 sec
+ 8/16 Test  #8: ToyRobotTest.PlacingInvalidLongitude ............   Passed    0.00 sec
       Start  9: ToyRobotTest.PlacingNonIntegerLatitude
- 9/15 Test  #9: ToyRobotTest.PlacingNonIntegerLatitude .........   Passed    0.00 sec
+ 9/16 Test  #9: ToyRobotTest.PlacingNonIntegerLatitude ..........   Passed    0.00 sec
       Start 10: ToyRobotTest.LowerAndUpperCaseSupported
-10/15 Test #10: ToyRobotTest.LowerAndUpperCaseSupported ........   Passed    0.00 sec
+10/16 Test #10: ToyRobotTest.LowerAndUpperCaseSupported .........   Passed    0.00 sec
       Start 11: ToyRobotTest.Left
-11/15 Test #11: ToyRobotTest.Left ..............................   Passed    0.00 sec
+11/16 Test #11: ToyRobotTest.Left ...............................   Passed    0.00 sec
       Start 12: ToyRobotTest.LeftLeftLeft
-12/15 Test #12: ToyRobotTest.LeftLeftLeft ......................   Passed    0.00 sec
+12/16 Test #12: ToyRobotTest.LeftLeftLeft .......................   Passed    0.00 sec
       Start 13: ToyRobotTest.RightMove
-13/15 Test #13: ToyRobotTest.RightMove .........................   Passed    0.00 sec
-      Start 14: ToyRobotTest.MoveSixTimesTriggersOutOfBounds
-14/15 Test #14: ToyRobotTest.MoveSixTimesTriggersOutOfBounds ...   Passed    0.00 sec
+13/16 Test #13: ToyRobotTest.RightMove ..........................   Passed    0.00 sec
+      Start 14: ToyRobotTest.MoveFiveTimesTriggersOutOfBounds
+14/16 Test #14: ToyRobotTest.MoveFiveTimesTriggersOutOfBounds ...   Passed    0.01 sec
       Start 15: ToyRobotTest.SecondPlace
-15/15 Test #15: ToyRobotTest.SecondPlace .......................   Passed    0.00 sec
+15/16 Test #15: ToyRobotTest.SecondPlace ........................   Passed    0.00 sec
+      Start 16: ToyRobotTest.CanStillMoveAfterOutOfBounds
+16/16 Test #16: ToyRobotTest.CanStillMoveAfterOutOfBounds .......   Passed    0.00 sec
 
-100% tests passed, 0 tests failed out of 15
+100% tests passed, 0 tests failed out of 16
 
-Total Test time (real) =   0.07 sec
+Total Test time (real) =   0.06 sec
 ```

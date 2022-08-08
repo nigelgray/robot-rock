@@ -37,14 +37,14 @@ TEST(ToyRobotTest, PlacingOutOfBoundsLongitude)
 {
 	ToyRobot toyRobot;
 
-	EXPECT_THAT(toyRobot.process("place 6,0,north"), StartsWith("Longitude value out-of-bounds:"));
+	EXPECT_THAT(toyRobot.process("place 5,0,north"), StartsWith("Longitude value out-of-bounds:"));
 }
 
 TEST(ToyRobotTest, PlacingOutOfBoundsLatitude)
 {
 	ToyRobot toyRobot;
 
-	EXPECT_THAT(toyRobot.process("place 0,6,north"), StartsWith("Latitude value out-of-bounds:"));
+	EXPECT_THAT(toyRobot.process("place 0,5,north"), StartsWith("Latitude value out-of-bounds:"));
 }
 
 TEST(ToyRobotTest, PlacingWithInvalidBearing)
@@ -113,18 +113,18 @@ TEST(ToyRobotTest, RightMove)
 	EXPECT_EQ(toyRobot.process("report"), "Output: 1,0,EAST");
 }
 
-TEST(ToyRobotTest, MoveSixTimesTriggersOutOfBounds)
+TEST(ToyRobotTest, MoveFiveTimesTriggersOutOfBounds)
 {
 	ToyRobot toyRobot;
 
 	EXPECT_EQ(toyRobot.process("place 0,0,north"), "");
-	for(auto iter = 1u; iter <= 5; iter++)
+	for(auto iter = 1u; iter <= 4; iter++)
 	{
 		EXPECT_EQ(toyRobot.process("move"), "");
 	}
 	EXPECT_THAT(toyRobot.process("move"), StartsWith("Trying to move Toy Robot out-of-bounds:"));
 
-	EXPECT_EQ(toyRobot.process("report"), "Output: 0,5,NORTH");
+	EXPECT_EQ(toyRobot.process("report"), "Output: 0,4,NORTH");
 }
 
 TEST(ToyRobotTest, SecondPlace)
